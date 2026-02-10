@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANAS AI - Interface Futuriste</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050510;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px; /* Donne la profondeur 3D */
+        }
+
+        /* --- Arrière-plan animé (Grille Cyberpunk) --- */
+        .background-grid {
+            position: absolute;
+            width: 200vw;
+            height: 200vh;
+            background-image: 
+                linear-gradient(var(--glass-bg) 1px, transparent 1px),
+                linear-gradient(90deg, var(--glass-bg) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotateX(60deg) translateY(0) translateZ(-200px); }
+            100% { transform: rotateX(60deg) translateY(50px) translateZ(-200px); }
+        }
+
+        /* --- Effet de particules brillantes --- */
+        .glow-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--neon-blue), transparent 70%);
+            opacity: 0.2;
+            filter: blur(60px);
+            animation: float 10s infinite ease-in-out;
+            z-index: -1;
+        }
+        .orb-2 {
+            background: radial-gradient(circle, var(--neon-purple), transparent 70%);
+            right: 10%;
+            bottom: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        /* --- Conteneur Principal 3D --- */
+        .main-container {
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            background: rgba(10, 10, 25, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 30px rgba(0, 243, 255, 0.1),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            transform: rotateX(2deg); /* Légère inclinaison 3D */
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+            animation: scanline 3s infinite linear;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* --- En-tête --- */
+        header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            background: linear-gradient(to right, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-dot {
+            width: 8px; height: 8px; background: var(--neon-blue); border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+            animation: pulse 2s infinite;
+        }
+        .model-name {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* --- Zone de Chat --- */
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar futuriste */
+        #chat-box::-webkit-scrollbar { width: 8px; }
+        #chat-box::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        #chat-box::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 4px; }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeInUp 0.3s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .user-message {
+            align-self: flex-end;
+            background: rgba(188, 19, 254, 0.15);
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            border-bottom-left-radius: 2px;
+        }
+
+        .bot-message strong { color: var(--neon-blue); }
+
+        /* --- Zone de saisie --- */
+        .input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--neon-blue), #00a8ff);
+            color: #000;
+            border: none;
+            padding: 0 30px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* --- Modal API Key --- */
+        #api-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--neon-blue);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content h2 { margin-bottom: 15px; font-family: 'Orbitron'; color: var(--neon-blue); }
+        .modal-content p { margin-bottom: 20px; font-size: 0.9rem; color: #ccc; }
+        .modal-content input { width: 100%; margin-bottom: 20px; }
+
+        .hidden { display: none !important; }
+
+        /* Loader */
+        .typing-indicator {
+            display: inline-block;
+            width: 10px; height: 10px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+            margin-right: 5px;
+        }
+        @keyframes typing { 0% { transform: scale(1); opacity: 1;} 50% { transform: scale(1.5); opacity: 0.5;} 100% { transform: scale(1); opacity: 1;} }
+
+    </style>
+</head>
+<body>
+
+    <!-- Éléments décoratifs d'arrière-plan -->
+    <div class="background-grid"></div>
+    <div class="glow-orb"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Modal pour la clé API -->
+    <div id="api-modal">
+        <div class="modal-content">
+            <h2>Initialisation Système</h2>
+            <p>Veuillez entrer votre clé API OpenRouter pour activer ANAS AI.</p>
+            <input type="password" id="api-key-input" placeholder="sk-or-...">
+            <button onclick="saveApiKey()">Activer</button>
+            <p style="font-size: 0.7rem; margin-top: 10px; opacity: 0.6;">La clé est stockée uniquement dans votre navigateur.</p>
+        </div>
+    </div>
+
+    <!-- Interface Chat -->
+    <div class="main-container">
+        <header>
+            <h1>ANAS AI</h1>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>EN LIGNE</span>
+            </div>
+            <div class="model-name">System: Trinity Large Free</div>
+        </header>
+
+        <div id="chat-box">
+            <div class="message bot-message">
+                Bonjour, humain. Je suis ANAS AI. Comment puis-je vous assister dans le futur aujourd'hui ?
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Entrez votre commande..." autocomplete="off">
+            <button id="send-btn" onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const MODEL = "arcee-ai/trinity-large-preview:free";
+        let API_KEY = localStorage.getItem('anas_ai_key');
+        
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const apiModal = document.getElementById('api-modal');
+
+        // Initialisation
+        if (API_KEY) {
+            apiModal.classList.add('hidden');
+        }
+
+        // Sauvegarder la clé API
+        function saveApiKey() {
+            const input = document.getElementById('api-key-input').value.trim();
+            if (input) {
+                API_KEY = input;
+                localStorage.setItem('anas_ai_key', API_KEY);
+                apiModal.classList.add('hidden');
+            } else {
+                alert("Veuillez entrer une clé valide.");
+            }
+        }
+
+        // Gérer la touche Entrée
+        userInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        // Ajouter un message à l'interface
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+            
+            // Convertir les sauts de ligne en <br> pour l'affichage simple
+            const formattedText = text.replace(/\n/g, '<br>');
+            div.innerHTML = formattedText;
+            
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Fonction principale d'envoi
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            if (!API_KEY) {
+                alert("Erreur: Clé API manquante. Rafraichissez la page.");
+                return;
+            }
+
+            // 1. Afficher le message utilisateur
+            appendMessage(text, 'user');
+            userInput.value = '';
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // 2. Indicateur de chargement
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('message', 'bot-message');
+            loadingDiv.innerHTML = '<span class="typing-indicator"></span> Traitement des données...';
+            chatBox.appendChild(loadingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // 3. Appel API OpenRouter
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.href, // Requis par OpenRouter
+                        "X-Title": "ANAS AI"
+                    },
+                    body: JSON.stringify({
+                        "model": MODEL,
+                        "messages": [
+                            {"role": "system", "content": "Tu es ANAS AI, un assistant futuriste, intelligent et utile. Tu réponds de manière concise et précise."},
+                            {"role": "user", "content": text}
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+
+                // Supprimer le loader
+                chatBox.removeChild(loadingDiv);
+
+                if (response.ok && data.choices && data.choices.length > 0) {
+                    const botResponse = data.choices[0].message.content;
+                    appendMessage(botResponse, 'bot');
+                } else {
+                    console.error("Erreur API:", data);
+                    appendMessage("Erreur système : Impossible de contacter le noyau neuronal (Erreur API). " + (data.error?.message || ""), 'bot');
+                }
+
+            } catch (error) {
+                chatBox.removeChild(loadingDiv);
+                appendMessage("Erreur critique de connexion.", 'bot');
+                console.error(error);
+            } finally {
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+    </script>
+</body>
+  </html>
